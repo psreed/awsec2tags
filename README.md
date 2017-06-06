@@ -1,83 +1,42 @@
 # awsec2tags
 
-#### Table of Contents
-
-1. [Description](#description)
-1. [Setup - The basics of getting started with awsec2tags](#setup)
-    * [What awsec2tags affects](#what-awsec2tags-affects)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with awsec2tags](#beginning-with-awsec2tags)
-1. [Usage - Configuration options and additional functionality](#usage)
-1. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-1. [Limitations - OS compatibility, etc.](#limitations)
-1. [Development - Guide for contributing to the module](#development)
-
 ## Description
 
-Start with a one- or two-sentence summary of what the module does and/or what
-problem it solves. This is your 30-second elevator pitch for your module.
-Consider including OS/Puppet version it works with.
-
-You can give more descriptive information in a second paragraph. This paragraph
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?" If your module has a range of functionality (installation, configuration,
-management, etc.), this is the time to mention it.
+AWS Tags as Puppet Facts for EC2 Instances.
+Does not use the aws cli, only ruby gems.
+Supports Windows and Linux
 
 ## Setup
 
-### What awsec2tags affects **OPTIONAL**
-
-If it's obvious what your module touches, you can skip this section. For
-example, folks can probably figure out that your mysql_instance module affects
-their MySQL instances.
-
-If there's more that they should know about, though, this is the place to mention:
-
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
-
-### Setup Requirements **OPTIONAL**
-
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
-
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you might want to include an additional "Upgrading" section
-here.
-
-### Beginning with awsec2tags
-
-The very basic steps needed for a user to get the module up and running. This
-can include setup steps, if necessary, or it can be an example of the most
-basic use of the module.
+Add this repo to your Puppetfile
+<pre>
+mod 'psreed-awsec2tags',
+  :git    => 'https://github.com/psreed/awsec2tags.git',
+  :branch => 'master'
+</pre>
 
 ## Usage
 
-This section is where you describe how to customize, configure, and do the
-fancy stuff with your module here. It's especially helpful if you include usage
-examples and code samples for doing things with your module.
-
-## Reference
-
-Here, include a complete list of your module's classes, types, providers,
-facts, along with the parameters for each. Users refer to this section (thus
-the name "Reference") to find specific details; most users don't read it per
-se.
+Add this class to your puppet enabled EC2 isntances:
+<pre>
+include awsec2tags
+</pre>
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc. If there
-are Known Issues, you might want to include them under their own heading here.
+Puppet agent needs to run twice before facts will be available. This is just the way it is since we need things that don't exist to check the tags, but we can't put those things in place before facter plugin sync runs.
+
+First Run: Will install required ruby gems for the facter code to work
+Second Run (and consecutive runs): Facter will use the ruby sdk through this plugin to pull EC2 tags and make them available
 
 ## Development
 
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
+I probably will not actively develop this since it works for my needs as is. Feel free to contribute if you like.
+I get a lot of github notifications that go into a black hole, so if i don't see a PR, send me an email directly outside of GitHub to paul.reed@puppet.com
 
-## Release Notes/Contributors/Etc. **Optional**
+## Contributors
 
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You can also add any additional sections you feel
-are necessary or important to include here. Please use the `## ` header.
+Just me (Paul Reed) currently. You can reach me at paul.reed@puppet.com
+
+
+
