@@ -1,0 +1,15 @@
+{
+  "name": "psreed-awsec2tags",
+  "version": "0.1.0",
+  "author": "psreed",
+  "summary": "Another AWS EC2 guest Tags module. No aws cli, ruby only. Supports Windows and Linux.",
+  "license": "Apache-2.0",
+  "source": "https://github.com/psreed/awsec2tgs",
+  "project_page": "https://github.com/psreed/awsec2tgs",
+  "issues_url": "https://github.com/psreed/awsec2tgs/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ],
+  "data_provider": null
+}
+
