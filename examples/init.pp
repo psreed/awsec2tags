@@ -11,7 +11,7 @@
 #
 include ::awsec2tags
 
-#ec2_instance { "myinstnace.example.com":
+#ec2_instance { "myinstance.example.com":
 #  ensure               => present,
 #  region               => "us-west-2",
 #  availability_zone    => "us-west-2a",
