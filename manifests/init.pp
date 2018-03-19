@@ -36,7 +36,7 @@ class awsec2tags (
   }
 
   ['retries','0.0.5','aws-sdk','~> 2'].slice(2) |String $gem, String $ver| {
-    exec { "${gem_bin} install ${gem} -v ${ver}":
+    exec { "${gem_bin} install ${gem} -v '${ver}''":
       unless  => "${gem_bin} list | ${grep_cmd} \"${gem} \"",
       require => File[$awsec2tags::ini_file],
     }
