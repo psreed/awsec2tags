@@ -55,6 +55,9 @@ class awsec2tags (
       exec { "${gem_bin} install retries":
         unless => "${gem_bin} list | find /C \"retries\"",
       }
+      exec { "${gem_bin} install aws-sdk":
+        unless => "${gem_bin} list | find /C \"aws-sdk \"",
+      }
       exec { "${gem_bin} install aws-sdk-core":
         unless => "${gem_bin} list | find /C \"aws-sdk-core\"",
       }
@@ -69,6 +72,9 @@ class awsec2tags (
     'RedHat': {
       exec { "${gem_bin} install retries":
         unless => "${gem_bin} list | grep retries",
+      }
+      exec { "${gem_bin} install aws-sdk":
+        unless => "${gem_bin} list | grep \"aws-sdk \"",
       }
       exec { "${gem_bin} install aws-sdk-core":
         unless => "${gem_bin} list | grep aws-sdk-core",
