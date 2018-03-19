@@ -35,9 +35,9 @@ class awsec2tags (
     notice { 'awsec2tags::clean_up_aws_gems function does not currently support Windows platforms':}
   }
 
-  ['retries','aws-sdk','inifile'].each |String $gem| {
-    exec { "${gem_bin} install ${awsec2tags::gem}":
-      unless  => "${gem_bin} list | ${grep_cmd} \"${awsec2tags::gem} \"",
+  ['retries','0.0.5','aws-sdk','~> 2'].slice(2) |String $gem, String $ver| {
+    exec { "${gem_bin} install ${gem} -v ${ver}":
+      unless  => "${gem_bin} list | ${grep_cmd} \"${gem} \"",
       require => File[$awsec2tags::ini_file],
     }
   }
