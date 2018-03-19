@@ -50,56 +50,28 @@ class awsec2tags (
   $aws_secret_access_key = $awsec2tags::params::aws_secret_access_key,
   $gem_bin = $awsec2tags::params::gem_bin,
 ) inherits awsec2tags::params {
-  case $facts['os']['family'] {
-    'windows': {
-      exec { "${gem_bin} install retries":
-        unless => "${gem_bin} list | find /C \"retries\"",
-      }
-      exec { "${gem_bin} install aws":
-        unless => "${gem_bin} list | find /C \"aws \"",
-      }
-      exec { "${gem_bin} install aws-sdk":
-        unless => "${gem_bin} list | find /C \"aws-sdk \"",
-      }
-      exec { "${gem_bin} install aws-sdk-core":
-        unless => "${gem_bin} list | find /C \"aws-sdk-core\"",
-      }
-      exec { "${gem_bin} install aws-sdk-resources":
-        unless => "${gem_bin} list | find /C \"aws-sdk-resources\"",
-      }
-      exec { "${gem_bin} install inifile":
-        unless => "${gem_bin} list | find /C \"inifile\"",
-      }
 
-    }
-    'RedHat': {
-      exec { "${gem_bin} install retries":
-        unless => "${gem_bin} list | grep retries",
+  ['retries','aws-sdk','inifile'].each |String $gem| {
+    case $facts['os']['family'] {
+      'windows': {
+        exec { "${gem_bin} install ${awsec2tags::gem}":
+          unless => "${gem_bin} list | find /C \"${awsec2tags::gem} \"",
+        }
       }
-      exec { "${gem_bin} install aws":
-        unless => "${gem_bin} list | grep \"aws \"",
-      }
-      exec { "${gem_bin} install aws-sdk":
-        unless => "${gem_bin} list | grep \"aws-sdk \"",
-      }
-      exec { "${gem_bin} install aws-sdk-core":
-        unless => "${gem_bin} list | grep aws-sdk-core",
-      }
-      exec { "${gem_bin} install aws-sdk-resources":
-        unless => "${gem_bin} list | grep aws-sdk-resources",
-      }
-      exec { "${gem_bin} install inifile":
-        unless => "${gem_bin} list | grep inifile",
+      'RedHat',default: {
+        exec { "${gem_bin} install ${awsec2tags::gem}":
+          unless => "${gem_bin} list | grep \"${awsec2tags::gem} \"",
+        }
       }
     }
   }
 
-  file { "${ini_path}":
+  file { $awsec2tags::ini_path:
     ensure  => directory,
     recurse => true,
-  } ->
-  file { "${ini_file}":
-    ensure => file,
+  }
+  -> file { $awsec2tags::ini_file:
+    ensure  => file,
     content => "[default]
 aws_access_key_id = ${aws_access_key_id}
 aws_secret_access_key = ${aws_secret_access_key}
