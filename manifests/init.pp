@@ -35,7 +35,7 @@ class awsec2tags (
     notify { 'awsec2tags::clean_up_aws_gems function does not currently support Windows platforms':}
   }
 
-  ['retries','0.0.5','aws-sdk','~> 2'].slice(2) |String $gem, String $ver| {
+  ['retries','0.0.5','aws-sdk','2.11.17'].slice(2) |String $gem, String $ver| {
     exec { "${gem_bin} install ${gem} -v '${ver}'":
       unless  => "${gem_bin} list | ${grep_cmd} \"${gem} \"",
       require => File[$awsec2tags::ini_file],
