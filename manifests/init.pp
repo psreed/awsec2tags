@@ -32,7 +32,7 @@ class awsec2tags (
       }
     }
   } else {
-    notice { 'awsec2tags::clean_up_aws_gems function does not currently support Windows platforms':}
+    notify { 'awsec2tags::clean_up_aws_gems function does not currently support Windows platforms':}
   }
 
   ['retries','0.0.5','aws-sdk','~> 2'].slice(2) |String $gem, String $ver| {
