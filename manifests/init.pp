@@ -50,11 +50,24 @@ class awsec2tags (
   $aws_secret_access_key = $awsec2tags::params::aws_secret_access_key,
   $gem_bin = $awsec2tags::params::gem_bin,
   $grep_cmd = $awsec2tags::params::grep_cmd,
+  $clean_up_aws_gems = $awsec2tags::params::clean_up_aws_gems,
 ) inherits awsec2tags::params {
+
+  #Currently only works on Linux
+  if $facts['os']['family'] != 'windows' {
+    if $clean_up_aws_gems == true {
+      exec { "${gem_bin} list | ${grep_cmd} \"aws-sdk\" | cut -d\" \" -f1 | xargs ${gem_bin} uninstall -aIx":
+        before => File[$awsec2tags::ini_file],
+      }
+    }
+  } else {
+    notice { 'awsec2tags::clean_up_aws_gems function does not currently support Windows platforms':}
+  }
 
   ['retries','aws-sdk','inifile'].each |String $gem| {
     exec { "${gem_bin} install ${awsec2tags::gem}":
-      unless => "${gem_bin} list | ${grep_cmd} \"${awsec2tags::gem} \"",
+      unless  => "${gem_bin} list | ${grep_cmd} \"${awsec2tags::gem} \"",
+      require => File[$awsec2tags::ini_file],
     }
   }
 

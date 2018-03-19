@@ -2,6 +2,7 @@
 class awsec2tags::params {
   $aws_access_key_id = ''
   $aws_secret_access_key = ''
+  $clean_up_aws_gems = false
 
   case $facts['os']['family'] {
     'windows': {
