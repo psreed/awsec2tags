@@ -49,20 +49,12 @@ class awsec2tags (
   $aws_access_key_id = $awsec2tags::params::aws_access_key_id,
   $aws_secret_access_key = $awsec2tags::params::aws_secret_access_key,
   $gem_bin = $awsec2tags::params::gem_bin,
+  $grep_cmd = $awsec2tags::params::grep_cmd,
 ) inherits awsec2tags::params {
 
   ['retries','aws-sdk','inifile'].each |String $gem| {
-    case $facts['os']['family'] {
-      'windows': {
-        exec { "${gem_bin} install ${awsec2tags::gem}":
-          unless => "${gem_bin} list | find /C \"${awsec2tags::gem} \"",
-        }
-      }
-      'RedHat',default: {
-        exec { "${gem_bin} install ${awsec2tags::gem}":
-          unless => "${gem_bin} list | grep \"${awsec2tags::gem} \"",
-        }
-      }
+    exec { "${gem_bin} install ${awsec2tags::gem}":
+      unless => "${gem_bin} list | ${grep_cmd} \"${awsec2tags::gem} \"",
     }
   }
 
