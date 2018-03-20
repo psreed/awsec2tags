@@ -29,6 +29,7 @@ class awsec2tags (
       exec { "${gem_bin} list aws-sdk* | cut -d\" \" -f1 | xargs ${gem_bin} uninstall -aIx":
         before => File[$awsec2tags::ini_file],
       }
+    }
     if $facts['os']['family'] == 'windows' {
       $pshell = 'C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NoLogo -NonInteractive'
       file { "${facts['env_temp_variable']}\\aws_sdk_gem_clean.ps1":
