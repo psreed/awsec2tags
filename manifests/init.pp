@@ -24,15 +24,22 @@ class awsec2tags (
   $clean_up_aws_gems = $awsec2tags::params::clean_up_aws_gems,
 ) inherits awsec2tags::params {
 
-  #Cleanup gems for aws-sdk* currently only works on Linux
-  if $facts['os']['family'] != 'windows' {
-    if $clean_up_aws_gems == true {
-      exec { "${gem_bin} list | ${grep_cmd} \"aws-sdk\" | cut -d\" \" -f1 | xargs ${gem_bin} uninstall -aIx":
+  if $clean_up_aws_gems == true {
+    if $facts['os']['family'] != 'windows' {
+      exec { "${gem_bin} list aws-sdk* | cut -d\" \" -f1 | xargs ${gem_bin} uninstall -aIx":
         before => File[$awsec2tags::ini_file],
       }
+    if $facts['os']['family'] == 'windows' {
+      $pshell = 'C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NoLogo -NonInteractive'
+      file { "${facts['env_temp_variable']}\\aws_sdk_gem_clean.ps1":
+        ensure  => present,
+        content => "& ${gem_bin} list aws-sdk* | ForEach-Object {\n  if (\$_ -like \"aws-sdk*\") {\n    & ${gem_bin} uninstall -aIx \$_.split(\" \")[0]\n  }\n}", #lint:ignore:140chars
+      }
+      -> exec { "${pshell} ${facts['env_temp_variable']}\\aws_sdk_gem_clean.ps1":
+        logoutput => true,
+        before    => File[$awsec2tags::ini_file],
+      }
     }
-  } else {
-    notify { 'awsec2tags::clean_up_aws_gems function does not currently support Windows platforms':}
   }
 
   ['retries','0.0.5','aws-sdk','2.11.17'].slice(2) |String $gem, String $ver| {
