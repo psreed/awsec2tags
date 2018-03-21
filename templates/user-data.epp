@@ -11,6 +11,8 @@ curl -k https://<%= $puppet_master %>:8140/packages/current/install.bash | sudo 
 sleep 10
 while [ -e "/opt/puppetlabs/puppet/cache/state/agent_catalog_run.lock" ]; do sleep 5; done
 puppet agent -t
+while [ -e "/opt/puppetlabs/puppet/cache/state/agent_catalog_run.lock" ]; do sleep 5; done
+puppet agent -t
 <% } -%>
 <% if $os_type =~ "Windows" { -%>
 <powershell>
