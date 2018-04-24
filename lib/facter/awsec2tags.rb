@@ -38,14 +38,20 @@ begin
   http = Net::HTTP.new(uri.host, uri.port)
   http.open_timeout = 2
   http.read_timeout = 2
+
+  # Get Instance ID to it's own custom fact
   request = Net::HTTP::Get.new("/latest/meta-data/instance-id")
   response = http.request(request)
   instance_id = response.body
 
-  request2 = Net::HTTP::Get.new("/latest/meta-data/placement/availability-zone")
-  response2 = http.request(request2)
-  r = response2.body
+  request = Net::HTTP::Get.new("/latest/meta-data/placement/availability-zone")
+  response = http.request(request)
+  r = response.body
   region = r.match(/.*-.*-[0-9]/)[0]
+
+  request = Net::HTTP::Get.new("latest/meta-data/public-ipv4/")
+  response = http.request(request)
+  public_ip = response.body
 
   Aws.use_bundled_cert!
   ec2 = Aws::EC2::Resource.new(region: region, credentials: Aws::Credentials.new(aws_access_key_id, aws_secret_access_key))
@@ -55,6 +61,12 @@ begin
   Facter.add("ec2_instance_id") do
     setcode do
       instance_id
+    end
+  end
+
+  Facter.add("ec2_public_ip") do
+    setcode do
+      public_ip
     end
   end
 
