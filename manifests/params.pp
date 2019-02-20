@@ -6,7 +6,7 @@ class awsec2tags::params {
 
   case $facts['os']['family'] {
     'windows': {
-      $gem_bin = '"C:\Program Files\Puppet Labs\Puppet\sys\ruby\bin\gem.bat"'
+      $gem_bin = '"C:\Program Files\Puppet Labs\Puppet\puppet\bin\gem.bat"'
       $ini_path = 'C:\Windows\System32\config\systemprofile\.aws'
       $ini_file = 'C:\Windows\System32\config\systemprofile\.aws\credentials'
       $grep_cmd = 'find /C'
