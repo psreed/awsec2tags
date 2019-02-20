@@ -1,6 +1,6 @@
 {
   "name": "psreed-awsec2tags",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "psreed",
   "summary": "Another AWS EC2 guest Tags module. No aws cli, ruby only. Supports Windows and Linux.",
   "license": "Apache-2.0",
