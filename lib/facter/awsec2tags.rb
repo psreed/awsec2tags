@@ -49,7 +49,7 @@ begin
   r = response.body
   region = r.match(/.*-.*-[0-9]/)[0]
 
-  request = Net::HTTP::Get.new("latest/meta-data/public-ipv4/")
+  request = Net::HTTP::Get.new("/latest/meta-data/public-ipv4")
   response = http.request(request)
   public_ip = response.body
 
