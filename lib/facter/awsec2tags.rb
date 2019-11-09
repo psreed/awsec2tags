@@ -66,7 +66,7 @@ begin
 
   Facter.add("ec2_public_ip") do
     setcode do
-      public_ip_address
+      public_ip
     end
   end
 
