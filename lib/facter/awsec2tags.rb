@@ -1,18 +1,55 @@
-  Facter.add("facter_rus_as") do
-    setcode do
-      Facter::Core::Execution.exec('whoami')
-    end
-  end
-
 begin 
-  require 'aws-sdk-resources'
   require 'net/http'
   require 'uri'
   require 'json'
   require 'facter'
-  require 'inifile'
+
+  uri = URI.parse("http://169.254.169.254")
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.open_timeout = 1
+  http.read_timeout = 1
+
+  # Get Instance ID to it's own custom fact
+  instance_id=""
+  begin 
+    request = Net::HTTP::Get.new("/latest/meta-data/instance-id")
+    response = http.request(request)
+    instance_id = response.body
+  rescue
+    exit # likely not an AWS instance, just exit if we can't get the instance_id
+  end
+
+  Facter.add("ec2_instance_id") do
+    setcode do
+      instance_id
+    end
+  end
+
+  request = Net::HTTP::Get.new("/latest/meta-data/placement/availability-zone")
+  response = http.request(request)
+  r = response.body
+  region = r.match(/.*-.*-[0-9]/)[0]
+
+  Facter.add("ec2_region") do
+    setcode do
+      region
+    end
+  end
+
+  request = Net::HTTP::Get.new("/latest/meta-data/public-ipv4")
+  response = http.request(request)
+  public_ip = response.body
+
+  Facter.add("ec2_public_ip") do
+    setcode do
+      public_ip
+    end
+  end
 
   #read credentials 
+  require 'aws-sdk-resources'
+  require 'inifile'
+
   credfile='/etc/puppetlabs/puppet/.aws/credentials'
   if File.file?(credfile)
     creds = IniFile.load(credfile)
@@ -33,48 +70,10 @@ begin
     raise("aws_access_key_id not set")
   end
 
-
-  uri = URI.parse("http://169.254.169.254")
-  http = Net::HTTP.new(uri.host, uri.port)
-  http.open_timeout = 2
-  http.read_timeout = 2
-
-  # Get Instance ID to it's own custom fact
-  request = Net::HTTP::Get.new("/latest/meta-data/instance-id")
-  response = http.request(request)
-  instance_id = response.body
-
-  request = Net::HTTP::Get.new("/latest/meta-data/placement/availability-zone")
-  response = http.request(request)
-  r = response.body
-  region = r.match(/.*-.*-[0-9]/)[0]
-
-  request = Net::HTTP::Get.new("/latest/meta-data/public-ipv4")
-  response = http.request(request)
-  public_ip = response.body
-
   Aws.use_bundled_cert!
   ec2 = Aws::EC2::Resource.new(region: region, credentials: Aws::Credentials.new(aws_access_key_id, aws_secret_access_key))
 # ec2 = Aws::EC2::Resource.new(region: region)
   i = ec2.instance(instance_id)
-
-  Facter.add("ec2_instance_id") do
-    setcode do
-      instance_id
-    end
-  end
-
-  Facter.add("ec2_public_ip") do
-    setcode do
-      public_ip
-    end
-  end
-
-  Facter.add("ec2_region") do
-    setcode do
-      region
-    end
-  end
 
   if i.exists?
     result = {}
