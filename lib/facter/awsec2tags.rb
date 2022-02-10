@@ -16,7 +16,7 @@ begin
     response = http.request(request)
     instance_id = response.body
   rescue
-    abort("No info at URI. Likely not an EC2 instance. Exiting.")
+    exit(0) # If we're not EC2 instance, just exit.
   end
 
   Facter.add("ec2_instance_id") do
