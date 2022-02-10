@@ -15,7 +15,7 @@ begin
     request = Net::HTTP::Get.new("/latest/meta-data/instance-id")
     response = http.request(request)
     instance_id = response.body
-  rescue
+  rescue => exc
     exit(0) # If we're not EC2 instance, just exit.
   end
 
